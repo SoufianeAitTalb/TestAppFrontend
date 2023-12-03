@@ -1,0 +1,165 @@
+
+<div class="grid">
+    <div class="col-12">
+        <div class="card px-6 py-6">
+            <p-toast></p-toast>
+            <p-toolbar styleClass="mb-4">
+                <ng-template pTemplate="left">
+                    <div class="my-2" >
+                        <button pButton pRipple label="Add CSV Line" icon="pi pi-plus" class="p-button-raised mr-2" (click)="addCSV()"></button>
+
+                    </div>
+                </ng-template>
+
+
+            </p-toolbar>
+
+            <div class="mb-3 ml-2"  ><span><h5>List</h5></span></div>
+
+            <p-table #dt [value]="csv"  responsiveLayout="scroll" [rows]="15" [globalFilterFields]="['name','quantity','price','category']" [paginator]="true"  [showCurrentPageReport]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"  [rowHover]="true" dataKey="id">
+                <ng-template pTemplate="caption">
+                    <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+
+
+                        <span class="block mt-2 md:mt-0 p-input-icon-left">
+                            <i class="pi pi-search"></i>
+                            <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Search..."  class="w-full sm:w-auto"/>
+                        </span>
+
+
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+
+                        <th pSortableColumn="company">Name <p-sortIcon field="company"></p-sortIcon></th>
+                        <th pSortableColumn="staffFullName"> Quantity <p-sortIcon field="staffFullName"></p-sortIcon></th>
+                        <th pSortableColumn="email">Price <p-sortIcon field="email"></p-sortIcon></th>
+                        <th pSortableColumn="phoneNumber">Category <p-sortIcon field="phoneNumber"></p-sortIcon></th>
+
+
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-csvElem>
+                    <tr>
+
+                        <td style="width:14%; min-width:10rem;"><span class="p-column-title">Name</span>
+                            <div *ngIf="csvElem.name" >{{csvElem.name}}</div>
+
+                        </td>
+                        <td  style="width:14%; min-width:10rem;"><span class="p-column-title">Quantity</span>
+
+                            <div *ngIf="csvElem.quantity">{{csvElem.quantity}}</div>
+
+
+                        </td>
+                        <td  style="width:14%; min-width:10rem;"><span class="p-column-title">Price</span>
+
+                            <div *ngIf="csvElem.price">{{csvElem.price}}</div>
+
+
+                        </td>
+                        <td  style="width:14%; min-width:10rem;"><span class="p-column-title">Category</span>
+
+                            <div *ngIf="csvElem.category">{{csvElem.category}}</div>
+
+
+                        </td>
+
+
+
+
+                        <td style="width:14%; min-width:10rem;">
+                            <span class="p-column-title">Options</span>
+                            <div class="flex">
+                                <button pButton pRipple icon="pi pi-pencil"  class="p-button-rounded  mr-2"  style="background-color: transparent; border: 1px solid green; color: green;"(click)="editCSV(csvElem)"></button>
+                                <button pButton pRipple icon="pi pi-times" class="p-button-rounded"  style="background-color: transparent; border: 1px solid red; color: red;"(click)="deleteCSV(csvElem)"></button>
+                            </div>
+                        </td>
+
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+
+
+        <p-dialog [(visible)]="deleteCsvDialog" header="Confirm" [modal]="true" [style]="{width:'450px'}">
+            <div class="flex align-items-center justify-content-center">
+                <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+                <span *ngIf="csvLine">Are you sure ? <b>{{csvLine.name}}</b> ?</span>
+            </div>
+            <ng-template pTemplate="footer">
+                <button pButton pRipple icon="pi pi-times" class="p-button-text" label="Non" (click)="deleteCsvDialog = false"></button>
+                <button pButton pRipple icon="pi pi-check" class="p-button-danger" label="Oui" (click)="confirmDelete()"></button>
+            </ng-template>
+        </p-dialog>
+
+
+        <p-dialog [(visible)]="csvDialog" [style]="{width: '1190px'}" header=" CSV Line" [modal]="true" class="p-fluid">
+            <ng-template pTemplate="content">
+                <p-tabView orientation="left">
+
+                    <p-tabPanel header="Details" class="line-height-3 m-0">
+
+                        <div class="form-columns formgroup-inline">
+                            <div class="form-column col-12 md:col-6">
+                                <div class="field ">
+                                    <label for="Name"  > <span style="color:red" >* </span>Name</label>
+                                    <input type="text" pInputText id="name"  [(ngModel)]="csvLine.name" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !csvLine.name}"/>
+                                    <small class="ng-dirty ng-invalid" *ngIf="submitted && !csvLine.name">Name is required.</small>
+                                </div>
+                                <div class="field ">
+                                    <label for="Name"  > <span style="color:red" >* </span>Quantity</label>
+                                    <input type="number" pInputText id="quantity"  [(ngModel)]="csvLine.quantity" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !csvLine.quantity}"/>
+                                    <small class="ng-dirty ng-invalid" *ngIf="submitted && !csvLine.quantity">Name is required.</small>
+                                </div>
+                                <div class="field ">
+                                    <label for="Name"  > <span style="color:red" >* </span>Price</label>
+                                    <input type="number" pInputText id="price"  [(ngModel)]="csvLine.price" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !csvLine.price}"/>
+                                    <small class="ng-dirty ng-invalid" *ngIf="submitted && !csvLine.price">Price is required.</small>
+                                </div>
+                                <div class="field ">
+                                    <label for="Name"  > <span style="color:red" >* </span>Category</label>
+                                    <input type="text" pInputText id="category"  [(ngModel)]="csvLine.category" required autofocus [ngClass]="{'ng-invalid ng-dirty' : submitted && !csvLine.category}"/>
+                                    <small class="ng-dirty ng-invalid" *ngIf="submitted && !csvLine.category">Name is required.</small>
+                                </div>
+
+
+
+                            </div>
+
+
+                            <div class="form-column col-12 md:col-6">
+
+
+                            </div>
+                        </div>
+                    </p-tabPanel>
+
+                </p-tabView>
+
+
+
+
+
+
+
+            </ng-template>
+
+            <ng-template pTemplate="footer">
+                <button pButton pRipple label="Annuler" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+                <button pButton pRipple label="Enregistrer" icon="pi pi-check" class="p-button-text" (click)="addOrEdit()"></button>
+            </ng-template>
+        </p-dialog>
+
+
+
+
+
+
+    </div>
+</div>
+
+
+
+

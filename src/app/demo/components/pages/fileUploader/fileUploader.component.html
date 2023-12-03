@@ -1,0 +1,38 @@
+<div class="grid">
+    <p-toast></p-toast>
+    <div class="col-12">
+        <div class="card">
+            <h5>Advanced</h5>
+            <div class="p-fluid p-formgrid grid">
+
+
+                <div class="field col-12 md:col-12">
+                    <label htmlFor="image">Upload file</label>
+
+                    <p-fileUpload
+                        #fileUpload
+                        name="file"
+                        url="{{environment.backendHost}}/api/upload/files"
+                        (onUpload)="onUpload($event)"
+                        [multiple]="true"
+                        [auto]="false"
+                        [showUploadButton]="false"
+                    >
+                        <ng-template pTemplate="content">
+                            <ul *ngIf="uploadedFiles.length">
+                                <li *ngFor="let file of uploadedFiles">{{file.name}} - {{file.size}} bytes</li>
+                            </ul>
+                        </ng-template>
+                    </p-fileUpload>
+
+                </div>
+                <div class="field col-12 md:col-12 p-d-flex p-jc-center p-ai-center">
+                    <p-button label="Submit" icon="pi pi-check" (onClick)="onAdd()" ></p-button>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+</div>
